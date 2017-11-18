@@ -13,7 +13,7 @@ def client():
 
     fileDirectory = raw_input("Enter the directory of the file you want access to: ")
     p = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    p.settimeout(2)
+    p.settimeout(20)
     message = 'ClientRequest: ', fileDirectory
     message2 = ''.join(message)
     try :
@@ -24,7 +24,7 @@ def client():
 
     print 'Connected to proxy.'
     p.send(message2)
-    f = open(fileDirectory, 'wb')
+    f = open("received", 'wb')
 
     while 1:
         socket_list = [sys.stdin, p]
@@ -35,17 +35,18 @@ def client():
         for sock in ready_to_read:
             if sock == p:
                 # incoming message from remote server, s
-                file = p.recv(2048)
+                file = sock.recv(2048)
                 if not file :
                     print '\nDisconnected from proxy'
                     sys.exit()
                 else :
                     while(file):
+                        print(file)
                         f.write(file)
-                        file = p.recv(2048)
+                        file = sock.recv(2048)
                     f.close()
                     print "Done receiving"
-                    p.close
+                    sock.close
         
             else :
                 # user entered a message

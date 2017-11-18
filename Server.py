@@ -18,11 +18,19 @@ class ProxyThread(threading.Thread):
         #self.csocket.send(bytes("Hi, This is from Server..",'utf-8'))
         while True:
             message = self.psocket.recv(RECV_BUFFER)
+            print message
             message2 = message.split()
             if message2[0] == 'ProxyRequest:':
                 fileDirectory = message2[1]
-                file = open(direct+fileDirectory, "r")
-                self.psocket.send(file)
+                f = open(fileDirectory, "r")
+                l = f.read(2048)
+                while (l):
+                    print('sending..')
+                    print(l)
+                    self.psocket.send(l)
+                    l = f.read(2048)
+                f.close()
+                print('sent')
 
             else:
                 break
@@ -40,7 +48,7 @@ def Server():
     print("Waiting for proxy request..")
     while True:
         server.listen(1)
-        proxysock, proxysock = server.accept()
+        proxysock, proxyAddress = server.accept()
         newthread = ProxyThread(proxyAddress, proxysock)
         newthread.start()
 
