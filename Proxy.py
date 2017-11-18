@@ -60,7 +60,7 @@ class ClientThread(threading.Thread):
         print ("Client at ", clientAddress , " disconnected...")
 
 
-def DistributedSystem():
+def ProxyServ():
     print('hi')
     proxy = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     proxy.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -75,4 +75,4 @@ def DistributedSystem():
 
 if __name__ == "__main__":
     
-    sys.exit(DistributedSystem())
+    sys.exit(ProxyServ())
