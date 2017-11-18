@@ -22,7 +22,7 @@ def client():
         print 'Unable to connect'
         sys.exit()
 
-    print 'Connected to remote host.'
+    print 'Connected to proxy.'
     p.send(message2)
     f = open(fileDirectory, 'wb')
 
@@ -37,7 +37,7 @@ def client():
                 # incoming message from remote server, s
                 file = p.recv(2048)
                 if not file :
-                    print '\nDisconnected from chat server'
+                    print '\nDisconnected from proxy'
                     sys.exit()
                 else :
                     while(file):
