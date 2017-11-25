@@ -5,10 +5,11 @@ import re
 import threading
 import os
 
-HOST = 'localhost'
+HOST = ''
 SOCKET_LIST = []
 RECV_BUFFER = 2048
-PORT = 7007
+PORT = 2222
+directory = '/Users/Sean/Documents/Server1/'
 
 class ProxyThread(threading.Thread):
     def __init__(self,proxyAddress,proxysocket):
@@ -20,13 +21,14 @@ class ProxyThread(threading.Thread):
             message = self.psocket.recv(RECV_BUFFER)
             print message
             message2 = message.split()
-            if message2[0] == 'ProxyRequest:':
-                fileDirectory = message2[1]
-                f = open(fileDirectory, "r")
+            if message2[0] == 'Request:':
+                fileName = message2[1]
+                fileDirectory = directory, fileName
+                fileDirectory2 = ''.join(fileDirectory)
+                f = open(fileDirectory2, "r")
                 l = f.read(2048)
                 while (l):
                     print('sending..')
-                    print(l)
                     self.psocket.send(l)
                     l = f.read(2048)
                 f.close()
