@@ -7,8 +7,8 @@ import threading
 HOST = 'localhost'
 SOCKET_LIST = []
 RECV_BUFFER = 2048
-PORT = 1111
-server1Files = ['ascii.txt']
+PORT = 1234
+server1Files = ['ascii.txt', 'ascii2.txt']
 server2Files = ['outputFile.txt']
 
 class ClientThread(threading.Thread):
@@ -24,21 +24,21 @@ class ClientThread(threading.Thread):
                 fileName = message2[1]
                 if fileName in server1Files:
                     serverHost = 'localhost'
-                    serverPort = '2222'
+                    serverPort = '1111'
                     print('File found.')
                     locationMessage = 'HOST: ', serverHost, ' PORT: ', serverPort, '\n'
                     locationMessage2 = ''.join(locationMessage)
                 elif fileName in server2Files:
                     serverHost = 'localhost'
-                    serverPort = '2000'
+                    serverPort = '2222'
                     print('File found.')
                     locationMessage = 'HOST: ', serverHost, ' PORT: ', serverPort, '\n\n'
                     locationMessage2 = ''.join(locationMessage)
                 else:
                     locationMessage2 = 'File not found.'
-
-
+            
                 self.csocket.send(locationMessage2)
+            break
 
 #                message3 = 'ProxyRequest: ', fileDirectory
 #                message4 = ''.join(message3)

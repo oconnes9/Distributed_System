@@ -8,8 +8,8 @@ import os
 HOST = ''
 SOCKET_LIST = []
 RECV_BUFFER = 2048
-PORT = 1111
-directory = '/Users/Sean/Documents/Server1/'
+PORT = 2222
+directory = '/Users/Sean/Documents/Server2/'
 
 class ProxyThread(threading.Thread):
     def __init__(self,proxyAddress,proxysocket):
@@ -32,15 +32,13 @@ class ProxyThread(threading.Thread):
                     print('sending..')
                     self.psocket.send(l)
                     l = f.read(2048)
-                print('sent')
                 f.close()
             elif message2[0] == "FILE_UPDATE:":
                 fileName = message2[1]
                 fileDirectory = directory, fileName
                 fileDirectory2 = ''.join(fileDirectory)
                 length = len(message2)
-                newData = message2[3]
-                x = 4
+                x = 3
                 while (x!=length):
                     newData = newData + ' ' + message2[x]
                     x = x + 1
@@ -48,16 +46,15 @@ class ProxyThread(threading.Thread):
                 f.write(newData)
                 newData = ''
                 f.close()
-                break
             
             elif message2[0] == "NO_UPDATE:":
                 print('Unmodified')
-                break
-
+            
             else:
                 break
 
         print ("Client has disconnected...")
+        print ("waiting..")
 
 
 
