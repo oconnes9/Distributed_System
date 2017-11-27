@@ -8,9 +8,8 @@ HOST = 'localhost'
 SOCKET_LIST = []
 RECV_BUFFER = 2048
 PORT = 1234
-server1Files = ['ascii.txt', 'ascii2.txt']
-server2Files = ['outputFile.txt']
-
+server1Files = []
+server2Files = []
 class ClientThread(threading.Thread):
     def __init__(self,clientAddress,clientsocket):
         threading.Thread.__init__(self)
@@ -22,30 +21,45 @@ class ClientThread(threading.Thread):
             message2 = message.split()
             if message2[0] == 'FindFile:':
                 fileName = message2[1]
-                if fileName in server1Files:
-                    serverHost = 'localhost'
-                    serverPort = '1111'
-                    print('File found.')
-                    locationMessage = 'HOST: ', serverHost, ' PORT: ', serverPort, '\n'
-                    locationMessage2 = ''.join(locationMessage)
-                elif fileName in server2Files:
-                    serverHost = 'localhost'
-                    serverPort = '2222'
-                    print('File found.')
-                    locationMessage = 'HOST: ', serverHost, ' PORT: ', serverPort, '\n\n'
-                    locationMessage2 = ''.join(locationMessage)
-                else:
-                    locationMessage2 = 'File not found.'
-            
+                for i in server1Files:
+                    if fileName == i.name:
+                        serverHost = 'localhost'
+                        serverPort = '1111'
+                        print('File found.')
+                        locationMessage = 'HOST: ', serverHost, ' PORT: ', serverPort, '\n'
+                        locationMessage2 = ''.join(locationMessage)
+                        self.csocket.send(locationMessage2)
+                        break
+                for j in server2Files:
+                    if fileName == j.name:
+                        serverHost = 'localhost'
+                        serverPort = '2222'
+                        print('File found.')
+                        locationMessage = 'HOST: ', serverHost, ' PORT: ', serverPort, '\n\n'
+                        locationMessage2 = ''.join(locationMessage)
+                        self.csocket.send(locationMessage2)
+                        break
+                            #else:
+                locationMessage2 = 'File not found.'
                 self.csocket.send(locationMessage2)
             break
 
+class file(object):
+    def __init__(self, name=None, lock=None, waiting=None):
+        self.name = name
+        self.lock = lock
+        waiting = waiting
 
 def ProxyServ():
-    print('hi')
     proxy = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     proxy.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     proxy.bind((HOST, PORT))
+    file1 = file('ascii.txt', 0)
+    file2 = file('ascii2.txt', 0)
+    file3 = file('outputFile.txt', 0, [])
+    server1Files.append(file1)
+    server1Files.append(file2)
+    server2Files.append(file3)
     print("Directory started")
     print("Waiting for client request..")
     while True:

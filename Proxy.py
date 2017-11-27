@@ -3,6 +3,8 @@ import sys
 import socket
 import select
 import os.path
+import datetime
+import random
 
 directoryHost = 'localhost'
 directoryPort = 1234
@@ -13,22 +15,39 @@ clientDirectoryString = '/Users/Sean/Documents/ClientStorage/'
 clientDirectory = os.listdir(clientDirectoryString)
 cacheDirectoryString = '/Users/Sean/Documents/ClientStorage/Cache/'
 cacheDirectory = os.listdir(clientDirectoryString)
+cache = []
+#cache = MyCache()
 
 def Proxy(fileName1):
+
     #fileName1 = raw_input("Enter the name of the file you want access to: ")
     fileName2 = [fileName1, '.txt']
     fileName = ''.join(fileName2)
     if fileName in clientDirectory:
         onClient(fileName)
     
-    elif fileName in cacheDirectory:
+    elif fileName in cache:
         onCache(fileName)
 
     else:
         directoryConnect(fileName)
+#cache.update(, fileName)
 
-def onClient(fileName):
-    fileDirectory = [clientDirectoryString, fileName]
+def addToCache(fileName):
+    if len(cache) == 2:
+        newName = cache[1]
+        fileDirectory = [cacheDirectoryString, newName]
+        fileDirectory2 = ''.join(fileDirectory)
+        os.remove(fileDirectory2)
+        #fileDirectory3 = os.listdir(fileDirectory2)
+        cache.insert(0, fileName)
+        cache.pop()
+    
+    elif len(cache) < 2:
+        cache.insert(0, fileName)
+
+def onCache(fileName):
+    fileDirectory = [cacheDirectoryString, fileName]
     fileDirectory2 = ''.join(fileDirectory)
     f = open(fileDirectory2, "r")
     contents = f.read()
@@ -38,13 +57,15 @@ def onClient(fileName):
         f = open(fileDirectory2, "w")
         updated = raw_input("Write out new file here.")
         f.write(updated)
-        
+    
     elif edit == 'no':
         print("Not updated")
     f.close()
+    cache.remove(fileName)
+    cache.insert(0, fileName)
 
 def onClient(fileName):
-    fileDirectory = [cacheDirectoryString, fileName]
+    fileDirectory = [clientDirectoryString, fileName]
     fileDirectory2 = ''.join(fileDirectory)
     f = open(fileDirectory2, "r")
     contents = f.read()
@@ -76,12 +97,11 @@ def directoryConnect(fileName):
         
         #while 1:
     socket_list = [sys.stdin, p]
-        
+
         # Get the list sockets which are readable
     ready_to_read,ready_to_write,in_error = select.select(socket_list , [], [])
-        
+    
     for sock in ready_to_read:
-        print('helllllo')
         if sock == p:
             # incoming message from remote server, s
             location = sock.recv(2048)
@@ -100,8 +120,6 @@ def directoryConnect(fileName):
                 else:
                     print("File not in directory.")
                     sock.close()
-
-
 
 
         else :
@@ -131,17 +149,19 @@ def serverConnect(serverHost, serverPort, fileName):
     
     # Get the list sockets which are readable
     ready_to_read,ready_to_write,in_error = select.select(socket_list , [], [])
-    
+    fileDirectory = [cacheDirectoryString, fileName]
+    fileDirectory2 = ''.join(fileDirectory)
+    file = open(fileDirectory2, 'w')
     for sock in ready_to_read:
         if sock == s:
             # incoming message from remote server, s
             #filepath = os.path.join('/Users/Sean/Documents/ClientStorage/', fileName)
             #f = open(filepath, 'w')
             l = sock.recv(2048)
+            file.write(l)
             #while(l):
             print l
             #l = sock.recv(2048)
-            print 'hi'
             
             #f.close()
             edit = raw_input("Done receiving. Do you want to edit? yes or no\n")
@@ -154,10 +174,11 @@ def serverConnect(serverHost, serverPort, fileName):
                 notUpdated = "NO_UPDATE"
                 sock.send(notUpdated)
             sock.close()
+
+
+    addToCache(fileName)
     #s.close()
     return;
-
-
 #if __name__ == "__main__":
     
 #  sys.exit(Proxy())
