@@ -40,43 +40,6 @@ class ClientThread(threading.Thread):
                 self.csocket.send(locationMessage2)
             break
 
-#                message3 = 'ProxyRequest: ', fileDirectory
-#                message4 = ''.join(message3)
-#                self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#                #self.s.settimeout(20)
-#                try :
-#                    self.s.connect((HOST, ServerPORT))
-#                except :
-#                    print 'Unable to connect'
-#                    sys.exit()
-#            
-#                print 'Connected to server.'
-#                self.s.send(message4)
-#                socket_list = [sys.stdin, self.s]
-#                
-#                # Get the list sockets which are readable
-#                ready_to_read,ready_to_write,in_error = select.select(socket_list , [], [])
-#                
-#                for sock in ready_to_read:
-#                    if sock == self.s:
-#                        # incoming message from remote server, s
-#                        l = sock.recv(2048)
-#                        while(l):
-#                            print('receiving..')
-#                            print('sending..')
-#                            self.csocket.send(l)
-#                            l = sock.recv(2048)
-#                        print "Done receiving and sending"
-#                        sock.close
-#                        self.csocket.close
-#        
-#        
-#        
-#        else:
-#            break
-#        
-#                            print ("Client at ", clientAddress , " disconnected...")
-
 
 def ProxyServ():
     print('hi')

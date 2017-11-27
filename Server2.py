@@ -38,7 +38,8 @@ class ProxyThread(threading.Thread):
                 fileDirectory = directory, fileName
                 fileDirectory2 = ''.join(fileDirectory)
                 length = len(message2)
-                x = 3
+                newData = message2[3]
+                x = 4
                 while (x!=length):
                     newData = newData + ' ' + message2[x]
                     x = x + 1
@@ -46,15 +47,16 @@ class ProxyThread(threading.Thread):
                 f.write(newData)
                 newData = ''
                 f.close()
-            
+                break
+                    
             elif message2[0] == "NO_UPDATE:":
                 print('Unmodified')
+                break
             
             else:
                 break
 
         print ("Client has disconnected...")
-        print ("waiting..")
 
 
 

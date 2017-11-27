@@ -11,27 +11,50 @@ serverHost = ''
 cd = ''
 clientDirectoryString = '/Users/Sean/Documents/ClientStorage/'
 clientDirectory = os.listdir(clientDirectoryString)
+cacheDirectoryString = '/Users/Sean/Documents/ClientStorage/Cache/'
+cacheDirectory = os.listdir(clientDirectoryString)
 
 def Proxy(fileName1):
     #fileName1 = raw_input("Enter the name of the file you want access to: ")
     fileName2 = [fileName1, '.txt']
     fileName = ''.join(fileName2)
-    if fileName not in clientDirectory:
-        directoryConnect(fileName)
-    else:
+    if fileName in clientDirectory:
         onClient(fileName)
+    
+    elif fileName in cacheDirectory:
+        onCache(fileName)
+
+    else:
+        directoryConnect(fileName)
 
 def onClient(fileName):
     fileDirectory = [clientDirectoryString, fileName]
     fileDirectory2 = ''.join(fileDirectory)
     f = open(fileDirectory2, "r")
-    print f
+    contents = f.read()
+    print contents
     edit = raw_input("Do you want to edit? yes or no")
     if edit == 'yes':
         f = open(fileDirectory2, "w")
         updated = raw_input("Write out new file here.")
         f.write(updated)
         
+    elif edit == 'no':
+        print("Not updated")
+    f.close()
+
+def onClient(fileName):
+    fileDirectory = [cacheDirectoryString, fileName]
+    fileDirectory2 = ''.join(fileDirectory)
+    f = open(fileDirectory2, "r")
+    contents = f.read()
+    print contents
+    edit = raw_input("Do you want to edit? yes or no")
+    if edit == 'yes':
+        f = open(fileDirectory2, "w")
+        updated = raw_input("Write out new file here.")
+        f.write(updated)
+    
     elif edit == 'no':
         print("Not updated")
     f.close()
@@ -82,13 +105,7 @@ def directoryConnect(fileName):
 
 
         else :
-            # user entered a message
-            print("Enter a filename.")
-            fileName = sys.stdin.readline()
-            message = 'FindFile: ', fileName
-            message2 = ''.join(message)
-            p.send(message2)
-            sys.stdout.flush()
+            break
     return;
 #print('waiting..')
 #sock.close()
