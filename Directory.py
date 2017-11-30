@@ -18,37 +18,74 @@ class ClientThread(threading.Thread):
         #self.csocket.send(bytes("Hi, This is from Server..",'utf-8'))
         while True:
             message = self.csocket.recv(RECV_BUFFER)
+            print(message)
             message2 = message.split()
             if message2[0] == 'FindFile:':
                 fileName = message2[1]
                 for i in server1Files:
                     if fileName == i.name:
-                        serverHost = 'localhost'
-                        serverPort = '1111'
-                        print('File found.')
-                        locationMessage = 'HOST: ', serverHost, ' PORT: ', serverPort, '\n'
-                        locationMessage2 = ''.join(locationMessage)
-                        self.csocket.send(locationMessage2)
-                        break
+                        print('found')
+                        if i.lock == 0:
+                            i.lock = 1
+                            print('locked')
+                            serverHost = 'localhost'
+                            serverPort = '1111'
+                            print('File found.')
+                            locationMessage = 'HOST: ', serverHost, ' PORT: ', serverPort, '\n'
+                            locationMessage2 = ''.join(locationMessage)
+                            self.csocket.send(locationMessage2)
+                            break
+                        else:
+                            print('busy')
+                            self.csocket.send('BUSY\n')
+            
+
                 for j in server2Files:
                     if fileName == j.name:
-                        serverHost = 'localhost'
-                        serverPort = '2222'
-                        print('File found.')
-                        locationMessage = 'HOST: ', serverHost, ' PORT: ', serverPort, '\n\n'
-                        locationMessage2 = ''.join(locationMessage)
-                        self.csocket.send(locationMessage2)
-                        break
+                        print('found')
+                        if j.lock == 0:
+                            j.lock = 1
+                            print('locked')
+                            serverHost = 'localhost'
+                            serverPort = '2222'
+                            print('File found.')
+                            locationMessage = 'HOST: ', serverHost, ' PORT: ', serverPort, '\n\n'
+                            locationMessage2 = ''.join(locationMessage)
+                            self.csocket.send(locationMessage2)
                             #else:
+                            break
+                        else:
+                            print('busy2')
+                            self.csocket.send('BUSY')
+        
                 locationMessage2 = 'File not found.'
-                self.csocket.send(locationMessage2)
-            break
+                    #self.csocket.send(locationMessage2)
+            elif message2[0] == 'UNLOCK:':
+                fileName = message2[1]
+                for i in server1Files:
+                    if fileName == i.name:
+                        if i.lock == 1:
+                            i.lock = 0
+                            print('released')
+                            break
+                for j in server2Files:
+                    if fileName == j.name:
+                        if j.lock == 1:
+                            j.lock = 0
+                            print('released')
+                            break
+                break
+                
+                #ocationMessage2 = 'File does not exist'
+                #self.csocket.send(locationMessage2)
+# break
+#else:
+
 
 class file(object):
-    def __init__(self, name=None, lock=None, waiting=None):
+    def __init__(self, name=None, lock=None):
         self.name = name
         self.lock = lock
-        waiting = waiting
 
 def ProxyServ():
     proxy = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -56,7 +93,7 @@ def ProxyServ():
     proxy.bind((HOST, PORT))
     file1 = file('ascii.txt', 0)
     file2 = file('ascii2.txt', 0)
-    file3 = file('outputFile.txt', 0, [])
+    file3 = file('outputFile.txt', 0)
     server1Files.append(file1)
     server1Files.append(file2)
     server2Files.append(file3)

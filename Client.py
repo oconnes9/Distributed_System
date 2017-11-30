@@ -7,6 +7,7 @@ def Client():
     while 1:
         fileName = raw_input("Enter the name of the file you want access to: ")
         Proxy.Proxy(fileName)
+#Proxy.GetLocation(fileName)
 
 #fileName = raw_input("Enter the name of the file you want access to: ")
 #Proxy.Proxy(fileName)

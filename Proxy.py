@@ -92,44 +92,62 @@ def directoryConnect(fileName):
         sys.exit()
 
     print 'Connected to directory.'
-    p.send(message2)
-        #f = open("received", 'wb')
-        
+    waiting =1
+    #f = open("received", 'wb')
+    while waiting == 1:
+        print('loop')
+        p.send(message2)
         #while 1:
-    socket_list = [sys.stdin, p]
+        socket_list = [sys.stdin, p]
 
-        # Get the list sockets which are readable
-    ready_to_read,ready_to_write,in_error = select.select(socket_list , [], [])
-    
-    for sock in ready_to_read:
-        if sock == p:
-            # incoming message from remote server, s
-            location = sock.recv(2048)
-            if not location :
-                p.disconnect
-                print '\nDisconnected from directory.'
-                sys.exit()
-            else :
-                location2 = location.split()
-                if location2[0] == "HOST:":
-                    serverHost = location2[1]
-                    serverPort = int(location2[3])
-                    print "Found Location: "
-                    print(serverHost, serverPort)
-                    serverConnect(serverHost, serverPort, fileName)
-                else:
-                    print("File not in directory.")
-                    sock.close()
+            # Get the list sockets which are readable
+        ready_to_read,ready_to_write,in_error = select.select(socket_list , [], [])
+        
+        for sock in ready_to_read:
+            if sock == p:
+                # incoming message from remote server, s
+                mess = sock.recv(2048)
+                print(mess)
+                if not mess :
+                    sock.disconnect
+                    print '\nDisconnected from directory.'
+                    sys.exit()
+                else :
+                    mess2 = mess.split()
+                    if mess2[0] == "HOST:":
+                        serverHost = mess2[1]
+                        serverPort = int(mess2[3])
+                        print "Found Location: "
+                        print(serverHost, serverPort)
+                        serverConnect(serverHost, serverPort, fileName)
+                        waiting =  0
+                    elif mess2[0] == "BUSY":
+                        print('busy2')
+                        waiting = 1
+                        
+                    else:
+                        print("File not in directory.")
+                        sock.close()
 
-
-        else :
-            break
     return;
 #print('waiting..')
 #sock.close()
 
 #cD = [clientDirectoryString, fileName]
 # currentDirectory = ''.join(cD)
+def unlock(fileName):
+    p = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    p.settimeout(20)
+    message = 'UNLOCK: ', fileName
+    message2 = ''.join(message)
+    try :
+        p.connect((directoryHost, directoryPort))
+    except :
+        print 'Unable to connect to directory.'
+        sys.exit()
+    
+    p.send(message2)
+
 
 def serverConnect(serverHost, serverPort, fileName):
     message = 'Request: ', fileName
@@ -174,6 +192,7 @@ def serverConnect(serverHost, serverPort, fileName):
                 notUpdated = "NO_UPDATE"
                 sock.send(notUpdated)
             sock.close()
+            unlock(fileName)
 
 
     addToCache(fileName)
