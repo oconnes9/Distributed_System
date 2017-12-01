@@ -39,6 +39,7 @@ class ClientThread(threading.Thread):
                             print('busy')
                             self.csocket.send('BUSY\n')
             
+            #break
 
                 for j in server2Files:
                     if fileName == j.name:
@@ -57,6 +58,8 @@ class ClientThread(threading.Thread):
                         else:
                             print('busy2')
                             self.csocket.send('BUSY')
+                            
+                            # break
         
                 locationMessage2 = 'File not found.'
                     #self.csocket.send(locationMessage2)

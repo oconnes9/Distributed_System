@@ -10,6 +10,7 @@ SOCKET_LIST = []
 RECV_BUFFER = 2048
 PORT = 1111
 directory = '/Users/Sean/Documents/Server1/'
+server1Files = []
 
 class ProxyThread(threading.Thread):
     def __init__(self,proxyAddress,proxysocket):
@@ -24,16 +25,20 @@ class ProxyThread(threading.Thread):
             message2 = message.split()
             if message2[0] == 'Request:':
                 fileName = message2[1]
+                for i in server1Files:
+                    if fileName == i.name:
+                        version = i.version
                 fileDirectory = directory, fileName
                 fileDirectory2 = ''.join(fileDirectory)
                 f = open(fileDirectory2, "r")
                 l = f.read(2048)
-                while (l):
-                    print('sending..')
-                    self.psocket.send(l)
-                    l = f.read(2048)
-                print('sent')
+                print l
+                message = ["Version: ", str(version), ' ', l]
+                message2 = ''.join(message)
+                print('sending..')
+                self.psocket.send(message2)
                 f.close()
+                break
             elif message2[0] == "FILE_UPDATE:":
                 fileName = message2[1]
                 fileDirectory = directory, fileName
@@ -49,6 +54,34 @@ class ProxyThread(threading.Thread):
                 newData = ''
                 f.close()
                 break
+                    
+            elif message2[0] == 'VERSION_UPDATE:':
+                fileName = message2[1]
+                for i in server1Files:
+                    if fileName == i.name:
+                        i.version = i.version + 1
+                        print('updated')
+                        fileDirectory = directory, fileName
+                        fileDirectory2 = ''.join(fileDirectory)
+                        length = len(message2)
+                        newData = message2[3]
+                        x = 4
+                        while (x!=length):
+                            newData = newData + ' ' + message2[x]
+                            x = x + 1
+                        f = open(fileDirectory2, "w")
+                        f.write(newData)
+                        newData = ''
+                        f.close()
+                        break
+                break
+                
+            elif message2[0] == 'VersionCheck:':
+                fileName = message2[1]
+                for i in server1Files:
+                    if fileName == i.name:
+                        version = i.version
+                        self.psocket.send(str(version))
             
             elif message2[0] == "NO_UPDATE:":
                 print('Unmodified')
@@ -59,12 +92,19 @@ class ProxyThread(threading.Thread):
 
         print ("Client has disconnected...")
 
-
+class file(object):
+    def __init__(self, name=None, version=None):
+        self.name = name
+        self.version = version
 
 def Server():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind((HOST, PORT))
+    file1 = file('ascii.txt', 0)
+    file2 = file('ascii2.txt', 0)
+    server1Files.append(file1)
+    server1Files.append(file2)
     print("Server started")
     print("Waiting for proxy request..")
     while True:

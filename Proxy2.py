@@ -11,9 +11,9 @@ directoryPort = 1234
 serverPort = 0
 serverHost = ''
 cd = ''
-clientDirectoryString = '/Users/Sean/Documents/ClientStorage/'
+clientDirectoryString = '/Users/Sean/Documents/ClientStorage2/'
 clientDirectory = os.listdir(clientDirectoryString)
-cacheDirectoryString = '/Users/Sean/Documents/ClientStorage/Cache/'
+cacheDirectoryString = '/Users/Sean/Documents/ClientStorage2/Cache/'
 cacheDirectory = os.listdir(clientDirectoryString)
 cache = []
 version = []
@@ -22,21 +22,23 @@ serverPort1 = 0
 #cache = MyCache()
 
 def Proxy(fileName1):
-
+    print('Proxy')
     #fileName1 = raw_input("Enter the name of the file you want access to: ")
     fileName2 = [fileName1, '.txt']
     fileName = ''.join(fileName2)
     if fileName in clientDirectory:
         onClient(fileName)
-    
+
     elif fileName in cache:
+        message = 'VersionCheck: ', fileName
+        message2 = ''.join(message)
         directoryConnect2(fileName)
 
     else:
         directoryConnect(fileName)
-
 #cache.update(, fileName)
 def updateCacheVersion(fileName, l, s, shost1, sport1):
+    print('updateCacheVersion')
     message = 'Request: ', fileName
     message2 = ''.join(message)
     s.send(message2)
@@ -68,6 +70,7 @@ def updateCacheVersion(fileName, l, s, shost1, sport1):
     s.close()
 
 def addToCache(fileName, version1):
+    print('addToCache')
     unlock(fileName)
     if len(cache) == 2:
         newName = cache[1]
@@ -84,8 +87,11 @@ def addToCache(fileName, version1):
         cache.insert(0, fileName)
         version.insert(0, version1)
 
-def onCache(fileName, shost1, sport1):
+def onCache(fileName, serverHost1, serverPort1):
+    sport1 = serverPort1
+    shost1 = serverHost1
     unlock(fileName)
+    print('onCache')
     fileDirectory = [cacheDirectoryString, fileName]
     fileDirectory2 = ''.join(fileDirectory)
     f = open(fileDirectory2, "r")
@@ -102,7 +108,7 @@ def onCache(fileName, shost1, sport1):
     elif edit == 'no':
         print("Not updated")
     f.close()
-
+    
     version1 = version[cache.index(fileName)]
     del version[cache.index(fileName)]
     cache.remove(fileName)
@@ -110,6 +116,7 @@ def onCache(fileName, shost1, sport1):
     version.insert(0, version1)
 
 def onClient(fileName):
+    print('onClient')
     fileDirectory = [clientDirectoryString, fileName]
     fileDirectory2 = ''.join(fileDirectory)
     f = open(fileDirectory2, "r")
@@ -126,6 +133,7 @@ def onClient(fileName):
     f.close()
 
 def directoryConnect(fileName):
+    print('directoryConnect')
     p = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     p.settimeout(20)
     message = 'FindFile: ', fileName
@@ -135,7 +143,7 @@ def directoryConnect(fileName):
     except :
         print 'Unable to connect to directory.'
         sys.exit()
-
+    
     print 'Connected to directory.'
     waiting =1
     #f = open("received", 'wb')
@@ -144,8 +152,8 @@ def directoryConnect(fileName):
         p.send(message2)
         #while 1:
         socket_list = [sys.stdin, p]
-
-            # Get the list sockets which are readable
+        
+        # Get the list sockets which are readable
         ready_to_read,ready_to_write,in_error = select.select(socket_list , [], [])
         
         for sock in ready_to_read:
@@ -169,7 +177,7 @@ def directoryConnect(fileName):
                     elif mess2[0] == "BUSY":
                         print('busy2')
                         waiting = 1
-                        
+                    
                     else:
                         print("File not in directory.")
                         sock.close()
@@ -179,7 +187,7 @@ def directoryConnect(fileName):
     return;
 
 def directoryConnect2(fileName):
-    print('directoryConnect')
+    print('directoryConnect2')
     p = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     p.settimeout(20)
     message = 'FindFile: ', fileName
@@ -217,7 +225,7 @@ def directoryConnect2(fileName):
                         serverHost1 = mess2[1]
                         serverPort1 = int(mess2[3])
                         print "Found Location: "
-                        print(serverHost1, serverPort1)
+                        print(serverHost, serverPort)
                         waiting =  0
                     elif mess2[0] == "BUSY":
                         print('busy2')
@@ -229,15 +237,15 @@ def directoryConnect2(fileName):
 
     p.close()
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #self.s.settimeout(20)
+        #self.s.settimeout(20)
     try :
         s.connect((serverHost1, serverPort1))
     except :
-        print 'Unable to connect to server1'
+        print 'Unable to connect to server2'
         sys.exit()
-
+        
     print 'Connected to server.'
-    #while 1:
+        #while 1:
     message = 'VersionCheck: ', fileName
     message2 = ''.join(message)
     s.send(message2)
@@ -260,10 +268,9 @@ def directoryConnect2(fileName):
             else:
                 updateCacheVersion(fileName, l, s, serverHost1, serverPort1) #DOOOOOOOOOOOOOOOOOOOOOO THISSSSSSSSSSSSSS
                 break
-
     serverHost1 = ''
     serverPort1 = 0
-    
+
     return;
 #print('waiting..')
 #sock.close()
@@ -271,6 +278,7 @@ def directoryConnect2(fileName):
 #cD = [clientDirectoryString, fileName]
 # currentDirectory = ''.join(cD)
 def updateVersion(fileName, updated, shost1, sport1):
+    print('updateVersion')
     message = 'VERSION_UPDATE: ', fileName, ' DATA: ', updated, '\n'
     message2 = ''.join(message)
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -280,13 +288,13 @@ def updateVersion(fileName, updated, shost1, sport1):
     except :
         print 'Unable to connect'
         sys.exit()
-    print('updating')
     s.send(message2)
     unlock(fileName)
     s.close()
 
 
 def unlock(fileName):
+    print('unlock')
     p = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     p.settimeout(20)
     message = 'UNLOCK: ', fileName
@@ -302,6 +310,7 @@ def unlock(fileName):
 
 
 def serverConnect(serverHost, serverPort, fileName):
+    print('serverConnect')
     message = 'Request: ', fileName
     message2 = ''.join(message)
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -313,7 +322,7 @@ def serverConnect(serverHost, serverPort, fileName):
         sys.exit()
     
     print 'Connected to server.'
-        #while 1:
+    #while 1:
     s.send(message2)
     socket_list = [sys.stdin, s]
     
@@ -330,7 +339,6 @@ def serverConnect(serverHost, serverPort, fileName):
             l = sock.recv(2048)
             l2 = l.split()
             length = len(l2)
-            print(l2[1])
             version1 = int(l2[1])
             newData = l2[2]
             x = 3
@@ -352,12 +360,12 @@ def serverConnect(serverHost, serverPort, fileName):
                 message2 = ''.join(message)
                 version1 = version1 + 1
                 file.write(updated)
-            #updateVersion(fileName, updated)
+                #updateVersion(fileName, updated)
                 #updateMessage = ["FILE_UPDATE: ", fileName, " NEW_DATA: ", updated, "\n"]
                 #updatedMessage2 = ''.join(updateMessage)
                 sock.send(message2)
                 file.close()
-                
+            
             elif edit == 'no':
                 notUpdated = "NO_UPDATE"
                 sock.send(notUpdated)
@@ -369,6 +377,3 @@ def serverConnect(serverHost, serverPort, fileName):
     addToCache(fileName, version1)
     #s.close()
     return;
-#if __name__ == "__main__":
-    
-#  sys.exit(Proxy())
