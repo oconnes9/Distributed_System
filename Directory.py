@@ -25,39 +25,26 @@ class ClientThread(threading.Thread):
                 for i in server1Files:
                     if fileName == i.name:
                         print('found')
-                        if i.lock == 0:
-                            i.lock = 1
-                            print('locked')
-                            serverHost = 'localhost'
-                            serverPort = '1111'
-                            print('File found.')
-                            locationMessage = 'HOST: ', serverHost, ' PORT: ', serverPort, '\n'
-                            locationMessage2 = ''.join(locationMessage)
-                            self.csocket.send(locationMessage2)
-                            break
-                        else:
-                            print('busy')
-                            self.csocket.send('BUSY\n')
+                        serverHost = 'localhost'
+                        serverPort = '1111'
+                        print('File found.')
+                        locationMessage = 'HOST: ', serverHost, ' PORT: ', serverPort, '\n'
+                        locationMessage2 = ''.join(locationMessage)
+                        self.csocket.send(locationMessage2)
+                        break
             
-            #break
-
                 for j in server2Files:
                     if fileName == j.name:
                         print('found')
-                        if j.lock == 0:
-                            j.lock = 1
-                            print('locked')
-                            serverHost = 'localhost'
-                            serverPort = '2222'
-                            print('File found.')
-                            locationMessage = 'HOST: ', serverHost, ' PORT: ', serverPort, '\n\n'
-                            locationMessage2 = ''.join(locationMessage)
-                            self.csocket.send(locationMessage2)
-                            #else:
-                            break
-                        else:
-                            print('busy2')
-                            self.csocket.send('BUSY')
+                        serverHost = 'localhost'
+                        serverPort = '2222'
+                        print('File found.')
+                        locationMessage = 'HOST: ', serverHost, ' PORT: ', serverPort, '\n\n'
+                        locationMessage2 = ''.join(locationMessage)
+                        self.csocket.send(locationMessage2)
+                        #else:
+                        break
+
                             
                             # break
         
@@ -78,7 +65,31 @@ class ClientThread(threading.Thread):
                             print('released')
                             break
                 break
-                
+
+            elif message2[0] == 'LOCK:':
+                fileName = message2[1]
+                for i in server1Files:
+                    if fileName == i.name:
+                        if i.lock == 0:
+                            i.lock = 1
+                            print('locked')
+                            self.csocket.send('LOCKED\n')
+                            break
+                        else:
+                            print('busy')
+                            self.csocket.send('BUSY\n')
+                for j in server2Files:
+                    if fileName == j.name:
+                        if j.lock == 0:
+                            j.lock = 1
+                            print('locked')
+                            self.csocket.send('LOCKED\n')
+                            break
+                        else:
+                            print('busy')
+                            self.csocket.send('BUSY\n')
+                break
+
                 #ocationMessage2 = 'File does not exist'
                 #self.csocket.send(locationMessage2)
 # break
