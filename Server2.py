@@ -101,8 +101,10 @@ def Server():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind((HOST, PORT))
-    file1 = file('outputFile.txt', 0)
-    server2Files.append(file1)
+    direct = os.listdir(directory)
+    for item in direct:
+        file1 = file(item, 0)
+        server2Files.append(file1)
     print("Server started")
     print("Waiting for proxy request..")
     while True:

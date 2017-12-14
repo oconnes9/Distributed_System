@@ -87,7 +87,7 @@ def onCache(fileName, shost1, sport1):
     fileDirectory2 = ''.join(fileDirectory)
     f = open(fileDirectory2, "r")
     contents = f.read()
-    print contents
+    print (contents)
     locking = 0
     edit = raw_input("Do you want to edit? yes or no")
     if edit == 'yes':
@@ -276,6 +276,7 @@ def updateVersion(fileName, updated, shost1, sport1):
 def unlock(fileName):
     p = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     #p.settimeout(20)
+    print("unlocking")
     message = 'UNLOCK: ', fileName
     message2 = ''.join(message)
     try :
