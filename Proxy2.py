@@ -116,7 +116,7 @@ def onClient(fileName):
     fileDirectory2 = ''.join(fileDirectory)
     f = open(fileDirectory2, "r")
     contents = f.read()
-    print contents
+    print (contents)
     edit = raw_input("Do you want to edit? yes or no")
     if edit == 'yes':
         f = open(fileDirectory2, "w")
