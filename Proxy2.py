@@ -135,10 +135,10 @@ def directoryConnect(fileName):
     try :
         p.connect((directoryHost, directoryPort))
     except :
-        print 'Unable to connect to directory.'
+        print ('Unable to connect to directory.')
         sys.exit()
 
-    print 'Connected to directory.'
+    print ('Connected to directory.')
 
     p.send(message2)
     #while 1:
@@ -154,14 +154,14 @@ def directoryConnect(fileName):
             print(mess)
             if not mess :
                 sock.close()
-                print '\nDisconnected from directory.'
+                print ('\nDisconnected from directory.')
                 sys.exit()
             else :
                 mess2 = mess.split()
                 if mess2[0] == "HOST:":
                     serverHost = mess2[1]
                     serverPort = int(mess2[3])
-                    print "Found Location: "
+                    print ("Found Location: ")
                     print(serverHost, serverPort)
                     serverConnect(serverHost, serverPort, fileName)
                 
@@ -182,10 +182,10 @@ def directoryConnect2(fileName):
     try :
         p.connect((directoryHost, directoryPort))
     except :
-        print 'Unable to connect to directory.'
+        print ('Unable to connect to directory.')
         sys.exit()
     
-    print 'Connected to directory.'
+    print ('Connected to directory.')
     p.send(message2)
     #while 1:
     socket_list = [sys.stdin, p]
@@ -200,14 +200,14 @@ def directoryConnect2(fileName):
             print(mess)
             if not mess :
                 sock.disconnect
-                print '\nDisconnected from directory.'
+                print ('\nDisconnected from directory.')
                 sys.exit()
             else :
                 mess2 = mess.split()
                 if mess2[0] == "HOST:":
                     serverHost1 = mess2[1]
                     serverPort1 = int(mess2[3])
-                    print "Found Location: "
+                    print ("Found Location: ")
                     print(serverHost1, serverPort1)
                 
                 else:
@@ -220,10 +220,10 @@ def directoryConnect2(fileName):
     try :
         s.connect((serverHost1, serverPort1))
     except :
-        print 'Unable to connect to server1'
+        print ('Unable to connect to server1')
         sys.exit()
     
-    print 'Connected to server.'
+    print ('Connected to server.')
     #while 1:
     message = 'VersionCheck: ', fileName
     message2 = ''.join(message)
@@ -265,7 +265,7 @@ def updateVersion(fileName, updated, shost1, sport1):
     try :
         s.connect((shost1, sport1))
     except :
-        print 'Unable to connect'
+        print ('Unable to connect')
         sys.exit()
     print('updating')
     s.send(message2)
@@ -283,7 +283,7 @@ def unlock(fileName):
     try :
         p.connect((directoryHost, directoryPort))
     except :
-        print 'Unable to connect to directory.'
+        print ('Unable to connect to directory.')
         sys.exit()
     
     p.send(message2)
@@ -297,7 +297,7 @@ def lock(fileName):
     try :
         p.connect((directoryHost, directoryPort))
     except :
-        print 'Unable to connect to directory.'
+        print ('Unable to connect to directory.')
         sys.exit()
     waiting = 1
     while waiting == 1:
@@ -316,7 +316,7 @@ def lock(fileName):
                 print(mess)
                 if not mess :
                     sock.disconnect
-                    print '\nDisconnected from directory.'
+                    print ('\nDisconnected from directory.')
                     sys.exit()
                 else :
                     mess2 = mess.split()
@@ -337,10 +337,10 @@ def serverConnect(serverHost, serverPort, fileName):
     try :
         s.connect((serverHost, serverPort))
     except :
-        print 'Unable to connect'
+        print ('Unable to connect')
         sys.exit()
     
-    print 'Connected to server.'
+    print ('Connected to server.')
     #while 1:
     s.send(message2)
     socket_list = [sys.stdin, s]
