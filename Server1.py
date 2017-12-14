@@ -32,7 +32,6 @@ class ProxyThread(threading.Thread):
                 fileDirectory2 = ''.join(fileDirectory)
                 f = open(fileDirectory2, "r")
                 l = f.read(2048)
-                print l
                 message = ["Version: ", str(version), ' ', l]
                 message2 = ''.join(message)
                 print('sending..')
