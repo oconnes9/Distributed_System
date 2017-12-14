@@ -21,7 +21,7 @@ class ProxyThread(threading.Thread):
         #self.csocket.send(bytes("Hi, This is from Server..",'utf-8'))
         while True:
             message = self.psocket.recv(RECV_BUFFER)
-            print message
+            print (message)
             message2 = message.split()
             if message2[0] == 'Request:':
                 fileName = message2[1]
