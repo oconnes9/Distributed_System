@@ -11,9 +11,9 @@ directoryPort = 1234
 serverPort = 0
 serverHost = ''
 cd = ''
-clientDirectoryString = '/Users/Sean/Documents/ClientStorage2/'
+clientDirectoryString = '/Users/Sean/Documents/ClientStorage3/'
 clientDirectory = os.listdir(clientDirectoryString)
-cacheDirectoryString = '/Users/Sean/Documents/ClientStorage2/Cache/'
+cacheDirectoryString = '/Users/Sean/Documents/ClientStorage3/Cache/'
 cacheDirectory = os.listdir(clientDirectoryString)
 cache = []
 version = []
@@ -137,7 +137,7 @@ def directoryConnect(fileName):
     except :
         print ('Unable to connect to directory.')
         sys.exit()
-
+    
     print ('Connected to directory.')
 
     p.send(message2)
@@ -258,6 +258,7 @@ def directoryConnect2(fileName):
 #cD = [clientDirectoryString, fileName]
 # currentDirectory = ''.join(cD)
 def updateVersion(fileName, updated, shost1, sport1):
+    print(shost1)
     message = 'VERSION_UPDATE: ', fileName, ' DATA: ', updated, '\n'
     message2 = ''.join(message)
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -327,6 +328,7 @@ def lock(fileName):
                         return 0;
 
     p.close()
+
 
 def getOtherServers(fileName):
     p = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -422,6 +424,7 @@ def serverConnect(serverHost, serverPort, fileName):
                     #print(serverPort)
                     updateVersion(fileName, updated, serverHost, serverPort)
                     i = i+1
+                #updateVersion(fileName, updated, serverHost, serverPort)
                 version1 = version1 + 1
                 file.write(updated)
                 #updateVersion(fileName, updated)

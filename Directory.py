@@ -10,8 +10,10 @@ RECV_BUFFER = 2048
 PORT = 1234
 server1Files = []
 server2Files = []
+server3Files = []
 found1 = False
 found2 = False
+found3 = False
 serverHost = 'localhost'
 
 class ClientThread(threading.Thread):
@@ -37,7 +39,7 @@ class ClientThread(threading.Thread):
                             self.csocket.send(locationMessage2)
                             break
             
-                                    
+            
                 for j in server2Files:
                     if fileName == j.name:
                         if j.primary == server2Files:
@@ -50,7 +52,18 @@ class ClientThread(threading.Thread):
                             #else:
                             break
 
-                            
+                for k in server3Files:
+                    if fileName == k.name:
+                        if k.primary == server3Files:
+                            print('found')
+                            serverPort = '3333'
+                            print('File found.')
+                            locationMessage = 'HOST: ', serverHost, ' PORT: ', serverPort, '\n\n'
+                            locationMessage2 = ''.join(locationMessage)
+                            self.csocket.send(locationMessage2)
+                            #else:
+                            break
+                
                             # break
         
                 locationMessage2 = 'File not found.'
@@ -69,6 +82,29 @@ class ClientThread(threading.Thread):
                             j.lock = 0
                             print('released')
                             break
+                for k in server3Files:
+                    if fileName == k.name:
+                        if k.lock == 1:
+                            k.lock = 0
+                            print('released')
+                            break
+                break
+
+            elif message2[0] == 'GetAllServers:':
+                print('hello')
+                allServers = ''
+                fileName = message2[1]
+                for i in server1Files:
+                    if fileName == i.name:
+                        allServers = allServers + '1111' + ' '
+                for j in server2Files:
+                    if fileName == j.name:
+                        allServers = allServers + '2222' + ' '
+                for k in server3Files:
+                    if fileName == k.name:
+                        allServers = allServers + '3333' + ' '
+
+                self.csocket.send(allServers)
                 break
 
             elif message2[0] == 'LOCK:':
@@ -88,7 +124,15 @@ class ClientThread(threading.Thread):
                             currPrimary = server2Files
                             index = server2Files.index(j)
                             print ('2')
-                            
+                                
+                for k in server3Files:
+                    if fileName == k.name:
+                        if j.primary == server3Files:
+                            foundPrimary = True
+                            currPrimary = server3Files
+                            index = server3Files.index(k)
+                            print ('3')
+                
                 if (foundPrimary):
                     if currPrimary[index].lock == 0:
                         print ('3')
@@ -124,10 +168,12 @@ def ProxyServ():
     file1 = file('ascii.txt', 0, server1Files)
     file2 = file('ascii2.txt', 0, server1Files)
     file3 = file('outputFile.txt', 0, server1Files)
+    file4 = file('file1.txt', 0, server3Files)
     server1Files.append(file1)
     server1Files.append(file2)
     server1Files.append(file3)
     server2Files.append(file3)
+    server3Files.append(file4)
     print("Directory started")
     print("Waiting for client request..")
     while True:

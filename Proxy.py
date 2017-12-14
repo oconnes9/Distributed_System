@@ -327,6 +327,40 @@ def lock(fileName):
 
     p.close()
 
+def getOtherServers(fileName):
+    p = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    p.settimeout(20)
+    message = 'GetAllServers: ', fileName
+    message2 = ''.join(message)
+    try :
+        p.connect((directoryHost, directoryPort))
+    except :
+        print ('Unable to connect to directory.')
+        sys.exit()
+    
+    print ('Connected to directory.')
+
+    p.send(message2)
+    #while 1:
+    socket_list = [sys.stdin, p]
+    
+    # Get the list sockets which are readable
+    ready_to_read,ready_to_write,in_error = select.select(socket_list , [], [])
+    
+    for sock in ready_to_read:
+        if sock == p:
+            # incoming message from remote server, s
+            mess = sock.recv(2048)
+            print(mess)
+            if not mess :
+                sock.close()
+                print ('\nDisconnected from directory.')
+                sys.exit()
+            else :
+                serverList = mess
+                sock.close()
+                return serverList
+
 
 def serverConnect(serverHost, serverPort, fileName):
     message = 'Request: ', fileName
@@ -377,7 +411,15 @@ def serverConnect(serverHost, serverPort, fileName):
                     locking = lock(fileName)
                 file = open(fileDirectory2, 'w')
                 updated = raw_input("Write out new file here.")
-                updateVersion(fileName, updated, serverHost, serverPort)
+                servers = getOtherServers(fileName)
+                print(servers)
+                servers2 = servers.split()
+                i = 0
+                while i < len(servers2):
+                    serverPort = int(servers2[i])
+                    #print(serverPort)
+                    updateVersion(fileName, updated, serverHost, serverPort)
+                    i = i+1
                 version1 = version1 + 1
                 file.write(updated)
                 file.close()
