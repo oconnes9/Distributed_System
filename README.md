@@ -1,4 +1,7 @@
 # Distributed_System
+There needs to be 6 folders, ClientStorage, ClientStorage2, ClientStorage3, Server1, Server2 and Server3. The ClientStorage folders must contain a folder named Cache in each. The Server folders must contain some sample .txt files which must then be written into the directory in the ProxyServ() function. They need to be saved to the appropriate list. The paths to the cache etc in the Server, Proxy and Directory files must be changed to fit wherever they are saved. To run the code, the three servers and the directory service must be run first, using " python Directory.py " etc in the command window. The three clients can then be run. The clients apps will ask the user what file they want access to. The file name (not including .txt) must be entered, e.g. ascii. The user then gets asked if they want to edit the file. They must then type yes or no and hit enter.
+
+The code and setup is quite messy but all of the features work well, as explained below.
 
 Firstly, the purpose of my application is to allows the user to read or write to text files saved on a remote server. I attempted 5 of the tasks for the assignment: Distributed Transparent File Access, Directory Service, Replication, Caching and Lock Service. I have used 3 servers and 3 clients to demonstrate. I used sockets for communication and the localhost to test.
 
